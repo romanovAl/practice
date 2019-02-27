@@ -1,5 +1,6 @@
 package com.example.samsung.practice;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -20,8 +21,8 @@ import io.reactivex.SingleOnSubscribe;
 
 public class JSONPlaceHolderApi {
     private String urlPath;
-    static String url = "https://jsonplaceholder.typicode.com/comments";
     int id = 0;
+    int postID = 0;
     String name;
     String email;
     String body;
@@ -31,45 +32,43 @@ public class JSONPlaceHolderApi {
     }
 
     public Single<ArrayList<Comment>> getUserList(final Button button) throws IOException, JSONException {
-        String userJsonStroke = getJsonFromServer(urlPath, 1000);
-        final JSONArray usersRoot = new JSONArray(userJsonStroke);
-
-        final ArrayList<Comment> comments = new ArrayList<>();
         return Single.create(new SingleOnSubscribe<ArrayList<Comment>>() {
             @Override
             public void subscribe(final SingleEmitter<ArrayList<Comment>> emitter) throws Exception {
                 button.setOnClickListener(new View.OnClickListener() {
+
+
+                    String userJsonStroke = getJsonFromServer(urlPath, 1000);
+                    final JSONArray usersRoot = new JSONArray(userJsonStroke);
+
+                    final ArrayList<Comment> comments = new ArrayList<>();
+
                     @Override
                     public void onClick (View v) {
-                        JSONPlaceHolderApi jsonPlaceHolderApi = new JSONPlaceHolderApi(url);
                         for (int i = 0; i < usersRoot.length(); i++) {
 
-                            JSONObject userRoot = null;
-                            try {
-                                userRoot = usersRoot.getJSONObject(i);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            int postID = 0;
-                            try {
-                                postID = userRoot.getInt("postId");
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                            Log.d(JSONPlaceHolderApi.this.toString(), "onClick: " + "click kek");
+
+                            JSONObject userRoot ;
 
                             try {
+                                userRoot = usersRoot.getJSONObject(i);
+                                postID = userRoot.getInt("postId");
                                 id = userRoot.getInt("id");
                                 name = userRoot.getString("name");
                                 email = userRoot.getString("email");
                                 body = userRoot.getString("body");
+
+                                Comment comment = new Comment(postID,id,name,email,body);
+                                comments.add(comment);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
 
 
-                            Comment comment = new Comment(postID,id,name,email,body);
-                            comments.add(comment);
+
                         }
+                        emitter.onSuccess(comments);
                     }
                 });
             }

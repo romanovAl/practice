@@ -1,14 +1,13 @@
 package com.example.samsung.practice;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class CommentsRecycleAdapter extends
         RecyclerView.Adapter<CommentsRecycleAdapter.CommentsVH> {
@@ -26,17 +25,23 @@ public class CommentsRecycleAdapter extends
 
         View view = inflater.inflate(R.layout.comment_item, viewGroup, false);
 
-        return new CommentsRecycleAdapter.CommentsVH(view);
+        return new CommentsVH(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull CommentsRecycleAdapter.CommentsVH holder, int position) {
+        final Comment comment = commentsList.get(position);
 
+        holder.textView1.setText(String.valueOf(comment.getId()));
+        holder.textView2.setText(String.valueOf(comment.getPostID()));
+        holder.textView3.setText(comment.getName());
+        holder.textView4.setText(comment.getEmail());
+        holder.textView5.setText(comment.getBody());
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return commentsList.size();
     }
 
     class CommentsVH extends RecyclerView.ViewHolder{
